@@ -18,6 +18,8 @@ RSpec.feature 'Listing Articles' do
     expect(page).to have_link(@second_article.title)
     expect(page).to have_content(@second_article.title)
     expect(page).to have_content(@second_article.body)
+
+    expect(page).not_to have_link('New Article')
   end
 
 end
