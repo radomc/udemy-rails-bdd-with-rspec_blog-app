@@ -6,14 +6,14 @@ RSpec.describe ArticlesController, type: :controller do
   describe "GET #edit" do
     before do
       @first_user = User.create(email: 'first_user@example.com', password: 'password')
+      @article = Article.create(title: 'The first article', body: 'first body', user: @first_user)
     end
 
     context 'owner is allowed to edit his articles' do
       it 'renders the edit template' do 
         login_user @first_user
-        article = Article.create(title: 'The first article', body: 'first body', user: @first_user)
 
-        get :edit, params: { id: article }
+        get :edit, params: { id: @article }
         assert_response :success
       end
     end
@@ -24,9 +24,7 @@ RSpec.describe ArticlesController, type: :controller do
 
         login_user second_user
 
-        article = Article.create(title: 'The first article', body: 'first body', user: @first_user)
-
-        get :edit, params: { id: article }
+        get :edit, params: { id: @article }
 
         assert_response :redirect
         message = 'You can only edit your own article.'
@@ -34,8 +32,9 @@ RSpec.describe ArticlesController, type: :controller do
       end
     end
 
-    it "returns http success" do
-      get :index
+    it 'returns http success for logged in user' do
+      login_user @first_user
+      get :edit, params: { id: @article }
       assert_response :success
     end
   end
