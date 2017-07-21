@@ -1,6 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_article, only: [:show, :edit, :update, :destroy]
+  before_action :check_owner, only: [:edit, :update, :destroy]
 
   def index
     @articles = Article.all
@@ -21,7 +22,7 @@ class ArticlesController < ApplicationController
     end
   end
 
-  def edit 
+  def edit
   end
 
   def update
@@ -52,5 +53,12 @@ class ArticlesController < ApplicationController
 
   def set_article
     @article = Article.find(params[:id])
+  end
+
+  def check_owner
+    if @article.user != current_user
+      flash[:danger] = 'You can only edit your own article.'
+      redirect_to root_path
+    end
   end
 end
